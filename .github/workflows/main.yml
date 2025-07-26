@@ -10,6 +10,7 @@ env:
   NODE_VERSION: "20"
 
 jobs:
+  # テストジョブ
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -32,6 +33,7 @@ jobs:
       - name: Run tests
         run: npm run test
 
+  # ビルドジョブ
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -57,3 +59,47 @@ jobs:
         with:
           name: build-files
           path: dist/
+
+  # デプロイジョブ(プレビュー環境)
+  deploy:
+    name: Deploy to Preview Environment
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
+          path: dist/
+
+      - name: Deploy to Firebase Preview Channel
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: oshi-saidan
+          channelId: preview-${{ github.run_number}}
+          expires: 7d
+        id: firebase_hosting_preview
+
+      - name: Comment Preview URL
+        uses: actions/github-script@v6
+        if: github.event_name == 'push'
+        with:
+          script: |
+            github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body: '🚀 Preview deployed!\nURL: ${{ steps.firebase_hosting_preview.outputs.details_url }}'
+            })
