@@ -6,6 +6,12 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  deployments: write
+
 env:
   NODE_VERSION: "20"
 
