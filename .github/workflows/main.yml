@@ -11,6 +11,8 @@ permissions:
   issues: write
   pull-requests: write
   deployments: write
+  repository-projects: read
+  statuses: write
 
 env:
   NODE_VERSION: "20"
@@ -103,14 +105,23 @@ jobs:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
         id: firebase_hosting_preview
 
-      # - name: Comment Preview URL
-      #   uses: actions/github-script@v6
-      #   if: github.event_name == 'push'
-      #   with:
-      #     script: |
-      #       github.rest.repos.createCommitComment({
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         commit_sha: context.sha,
-      #         body: '🚀 Preview deployed!\nURL: ${{ steps.firebase_hosting_preview.outputs.details_url }}'
-      #       })
+      - name: Debug Firebase outputs
+        run: |
+          echo "Details URL: ${{ steps.firebase_hosting_preview.outputs.details_url }}"
+          echo "Expire Time: ${{ steps.firebase_hosting_preview.outputs.expire_time }}"
+
+      - name: Comment Preview URL
+        uses: actions/github-script@v7
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+          script: |
+            try {
+              await github.rest.repos.createCommitComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                commit_sha: context.sha,
+                body: '🚀 Preview deployed!\nURL: ' + '${{ steps.firebase_hosting_preview.outputs.details_url }}'
+              })
+            } catch (error) {
+              console.log('Failed to to post comment:', error.message)
+            }
