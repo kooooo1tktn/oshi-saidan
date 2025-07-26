@@ -109,19 +109,3 @@ jobs:
         run: |
           echo "Details URL: ${{ steps.firebase_hosting_preview.outputs.details_url }}"
           echo "Expire Time: ${{ steps.firebase_hosting_preview.outputs.expire_time }}"
-
-      - name: Comment Preview URL
-        uses: actions/github-script@v7
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        with:
-          script: |
-            try {
-              await github.rest.repos.createCommitComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                commit_sha: context.sha,
-                body: '🚀 Preview deployed!\nURL: ' + '${{ steps.firebase_hosting_preview.outputs.details_url }}'
-              })
-            } catch (error) {
-              console.log('Failed to to post comment:', error.message)
-            }
