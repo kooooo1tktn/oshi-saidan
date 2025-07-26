@@ -5,6 +5,6 @@ import "@testing-library/jest-dom";
 describe("title", () => {
   it("should render title", () => {
     render(<App />);
-    expect(screen.getByText("Vite + React")).toBeInTheDocument();
+    expect(screen.getByText("推し祭壇")).toBeInTheDocument();
   });
 });
