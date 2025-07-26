@@ -99,7 +99,7 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           projectId: oshi-saidan
-          channelId: preview-${{ github.run_number}}
+          channelId: preview-${{ github.ref_name}}
           expires: 7d
         env:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
