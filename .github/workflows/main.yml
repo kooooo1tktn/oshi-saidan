@@ -103,14 +103,14 @@ jobs:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
         id: firebase_hosting_preview
 
-      - name: Comment Preview URL
-        uses: actions/github-script@v6
-        if: github.event_name == 'push'
-        with:
-          script: |
-            github.rest.repos.createCommitComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              commit_sha: context.sha,
-              body: '🚀 Preview deployed!\nURL: ${{ steps.firebase_hosting_preview.outputs.details_url }}'
-            })
+      # - name: Comment Preview URL
+      #   uses: actions/github-script@v6
+      #   if: github.event_name == 'push'
+      #   with:
+      #     script: |
+      #       github.rest.repos.createCommitComment({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         commit_sha: context.sha,
+      #         body: '🚀 Preview deployed!\nURL: ${{ steps.firebase_hosting_preview.outputs.details_url }}'
+      #       })
