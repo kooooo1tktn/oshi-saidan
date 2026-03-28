@@ -12,11 +12,24 @@ jest.mock("react-router-dom", () => ({
     <div>{children}</div>
   ),
   Route: ({ element }: { element: React.ReactNode }) => <div>{element}</div>,
+  useParams: jest.fn(() => ({ id: '1' })),
+  useNavigate: () => jest.fn(),
+}));
+
+// Supabaseのモック
+jest.mock("../src/supabase/supabaseFunctions.ts", () => ({
+  getPosts: jest.fn(() => Promise.resolve([])),
+  getPostById: jest.fn(() => Promise.resolve({id: 1, description: "test"})),
+  getImageUrl: jest.fn(() => Promise.resolve([])),
 }));
 
 describe("title", () => {
-  it("should render title", () => {
-    render(<App />);
-    expect(screen.getByText("推し祭壇")).toBeInTheDocument();
+  it("should render title", async () => {
+    render(
+      <App />
+    );
+
+    const titleElement = await screen.findByText("推し祭壇");
+    expect(titleElement).toBeInTheDocument();
   });
 });
