@@ -2,6 +2,7 @@ import App from "../src/App";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import React from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // React Routerのモック
 jest.mock("react-router-dom", () => ({
@@ -14,19 +15,26 @@ jest.mock("react-router-dom", () => ({
   Route: ({ element }: { element: React.ReactNode }) => <div>{element}</div>,
   useParams: jest.fn(() => ({ id: '1' })),
   useNavigate: () => jest.fn(),
+  Link: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  )
 }));
 
 // Supabaseのモック
 jest.mock("../src/supabase/supabaseFunctions.ts", () => ({
-  getPosts: jest.fn(() => Promise.resolve([])),
+  getPosts: jest.fn(() => Promise.resolve([{id: 1, description: "test", image_url: ""}])),
   getPostById: jest.fn(() => Promise.resolve({id: 1, description: "test"})),
   getImageUrl: jest.fn(() => Promise.resolve([])),
 }));
 
 describe("title", () => {
   it("should render title", async () => {
+    const queryClient = new QueryClient();
+
     render(
-      <App />
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>,
     );
 
     const titleElement = await screen.findByText("推し祭壇");
