@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
 import { getPosts } from "../supabase/supabaseFunctions";
 import { Link } from "react-router-dom";
 import { Button,Box } from "@chakra-ui/react";
 import { getImageUrl } from "../supabase/supabaseFunctions";
+import { useQuery } from "@tanstack/react-query";
 
 interface Post {
   id: number;
@@ -11,20 +11,14 @@ interface Post {
 }
 
 export const Home = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading } = useQuery<Post[]>({ queryKey: ['posts'], queryFn: getPosts })
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const postsData = await getPosts();
-      setPosts(postsData);
-      setLoading(false);
-    };
-    fetchPosts();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <div>Loading...</div>;
+  }
+
+  if (!data?.length) {
+    return <div>投稿がまだありません</div>
   }
 
   return (
@@ -32,7 +26,7 @@ export const Home = () => {
       <h1>推し祭壇</h1>
       <Button as={Link} to="/new" colorScheme="blue" mt={4}>新規投稿</Button>
       <Box>
-        {posts.map((post) => {
+        {data.map((post) => {
           const imageUrl = getImageUrl(post.image_url);
           return (
             <Link key={post.id} to={`/posts/${post.id}`}>
