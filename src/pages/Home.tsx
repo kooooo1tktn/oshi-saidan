@@ -3,15 +3,10 @@ import { Link } from "react-router-dom";
 import { Button,Box } from "@chakra-ui/react";
 import { getImageUrl } from "../supabase/supabaseFunctions";
 import { useQuery } from "@tanstack/react-query";
-
-interface Post {
-  id: number;
-  description: string;
-  image_url: string;
-}
+import { Post } from "../types";
 
 export const Home = () => {
-  const { data, isLoading } = useQuery<Post[]>({ queryKey: ['posts'], queryFn: getPosts })
+  const { data, isLoading } = useQuery<Post[]>({ queryKey: ['posts'], queryFn: getPosts });
 
   if (isLoading) {
     return <div>Loading...</div>;

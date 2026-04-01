@@ -4,16 +4,11 @@ import { getImageUrl } from "../supabase/supabaseFunctions";
 import { Button } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-
-interface Post {
-  id: number;
-  description: string;
-  image_url: string;
-}
+import { Post } from "../types";
 
 export const Posts = () => {
   const { id } = useParams<{ id: string }>();
-  const { data, isLoading } = useQuery<Post>({queryKey: ["post", id], queryFn: () => getPostById(id!)})
+  const { data, isLoading } = useQuery<Post>({queryKey: ["post", id], queryFn: () => getPostById(id!)});
 
   if (isLoading) {
     return <p>Loading...</p>;

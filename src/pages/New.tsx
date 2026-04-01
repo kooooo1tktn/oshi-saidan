@@ -30,7 +30,7 @@ export const New = () => {
 
   // 投稿ボタン、クリック時の処理
   const onSubmit = async (data: FormData) => {
-    await createPosts(data.image, data.content);
+    await createPosts(data.image[0], data.content);
     navigate("/");
   };
 

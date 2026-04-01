@@ -34,12 +34,12 @@ export function getImageUrl(path: string) {
 }
 
 // 投稿処理
-export async function createPosts(image: FileList, content: string) {
+export async function createPosts(image: File, content: string) {
   // Storageへの画像アップロード処理
   const { data, error: uploadError } = await supabase
     .storage
     .from('post-images')
-    .upload(`posts/${crypto.randomUUID()}`, image[0])
+    .upload(`posts/${crypto.randomUUID()}`, image)
     if (uploadError) {
       throw new Error(`画像のアップロードに失敗しました: ${uploadError.message}`);
     }
