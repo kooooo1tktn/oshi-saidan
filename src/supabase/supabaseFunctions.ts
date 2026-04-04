@@ -47,7 +47,7 @@ export async function createPosts(image: File, content: string) {
   // DBへのインサート処理
   const { error: insertError } = await supabase
     .from("posts")
-    .insert({ description: content, image_url: data?.path });
+    .insert({ description: content, image_url: data.path });
     if (insertError) {
       throw new Error(`データベースへのインサートに失敗しました: ${insertError.message}`);
     }

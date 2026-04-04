@@ -8,11 +8,14 @@ import {
   FormControl,
   Textarea,
   Input,
-  FormErrorMessage
+  FormErrorMessage,
+  Alert,
+  AlertIcon,
 } from "@chakra-ui/react";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { createPosts } from "../supabase/supabaseFunctions";
+import { useState } from "react";
 
 type FormData = {
   image: FileList;
@@ -23,15 +26,23 @@ export const New = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isSubmitting },
   } = useForm<FormData>({ mode: "onBlur" });
 
   const navigate = useNavigate();
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   // 投稿ボタン、クリック時の処理
   const onSubmit = async (data: FormData) => {
-    await createPosts(data.image[0], data.content);
-    navigate("/");
+    try {
+      await createPosts(data.image[0], data.content);
+      navigate("/");
+    } catch(error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      }
+    }
   };
 
   return (
@@ -63,10 +74,17 @@ export const New = () => {
                   <Button type="button" as={Link} to="/">
                     キャンセル
                   </Button>
-                  <Button type="submit" disabled={!isValid}>
+                  <Button type="submit" disabled={!isValid || isSubmitting}>
                     投稿
                   </Button>
                 </HStack>
+                {errorMessage && (
+                  <Alert status="error">
+                    <AlertIcon />
+                    投稿に失敗しました。<br/>
+                    {errorMessage}
+                  </Alert>
+                )}
               </VStack>
             </form>
           </Box>

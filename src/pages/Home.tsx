@@ -1,19 +1,22 @@
-import { getPosts } from "../supabase/supabaseFunctions";
+import { getPosts, getImageUrl } from "../supabase/supabaseFunctions";
 import { Link } from "react-router-dom";
 import { Button,Box } from "@chakra-ui/react";
-import { getImageUrl } from "../supabase/supabaseFunctions";
 import { useQuery } from "@tanstack/react-query";
 import { Post } from "../types";
 
 export const Home = () => {
-  const { data, isLoading } = useQuery<Post[]>({ queryKey: ['posts'], queryFn: getPosts });
+  const { data, isLoading, isError, error } = useQuery<Post[]>({ queryKey: ['posts'], queryFn: getPosts });
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
+  if (isError) {
+    return <div>投稿の取得に失敗しました。：{error.message}</div>;
+  }
+
   if (!data?.length) {
-    return <div>投稿がまだありません</div>
+    return <div>投稿がまだありません</div>;
   }
 
   return (
