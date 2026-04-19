@@ -1,18 +1,15 @@
 import {
-  Button,
-  Container,
-  VStack,
   Box,
-  HStack,
-  Heading,
+  Button,
+  VStack,
+  Text,
   FormControl,
-  Textarea,
-  Input,
   FormErrorMessage,
+  Textarea,
   Alert,
   AlertIcon,
 } from "@chakra-ui/react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { createPosts } from "../supabase/supabaseFunctions";
 import { useState } from "react";
@@ -30,15 +27,13 @@ export const New = () => {
   } = useForm<FormData>({ mode: "onBlur" });
 
   const navigate = useNavigate();
-
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // 投稿ボタン、クリック時の処理
   const onSubmit = async (data: FormData) => {
     try {
       await createPosts(data.image[0], data.content);
       navigate("/");
-    } catch(error) {
+    } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
       }
@@ -46,50 +41,132 @@ export const New = () => {
   };
 
   return (
-    <>
-      <Container>
-        <VStack>
-          <Heading>新規投稿</Heading>
-          <Box>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <VStack>
-                <FormControl isInvalid={!!errors.image}>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    {...register("image", { required: "画像は必須です" })}
-                  />
-                  <FormErrorMessage>{errors.image?.message}</FormErrorMessage>
-                </FormControl>
-                <FormControl isInvalid={!!errors.content}>
-                  <Textarea
-                    placeholder="何を投稿しますか？"
-                    {...register("content", {
-                      required: "説明文の入力は必須です",
-                    })}
-                  />
-                  <FormErrorMessage>{errors.content?.message}</FormErrorMessage>
-                </FormControl>
-                <HStack>
-                  <Button type="button" as={Link} to="/">
-                    キャンセル
-                  </Button>
-                  <Button type="submit" disabled={!isValid || isSubmitting}>
-                    投稿
-                  </Button>
-                </HStack>
-                {errorMessage && (
-                  <Alert status="error">
-                    <AlertIcon />
-                    投稿に失敗しました。<br/>
-                    {errorMessage}
-                  </Alert>
-                )}
-              </VStack>
-            </form>
-          </Box>
-        </VStack>
-      </Container>
-    </>
+    <Box maxW="1100px" mx="auto" px={{ base: 4, lg: 12 }} py={10}>
+      <Text
+        fontFamily="heading"
+        fontSize="20px"
+        fontWeight="600"
+        color="#1A0840"
+        mb={8}
+        textAlign="center"
+      >
+        新しい投稿
+      </Text>
+
+      {/* Form card */}
+      <Box
+        bg="rgba(255,255,255,0.72)"
+        style={{ backdropFilter: "blur(12px)" }}
+        border="1px solid"
+        borderColor="rgba(200,170,255,0.45)"
+        borderRadius="2xl"
+        p={9}
+        maxW="560px"
+        boxShadow="0 4px 24px rgba(100,70,200,0.10)"
+        mx="auto"
+      >
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <VStack spacing={5} align="stretch">
+            {/* Image upload */}
+            <FormControl isInvalid={!!errors.image}>
+              <Text
+                fontFamily="heading"
+                fontSize="13px"
+                fontWeight="600"
+                color="#6650A0"
+                mb={2}
+              >
+                画像
+              </Text>
+              <Box
+                border="2px dashed rgba(200,170,255,0.55)"
+                borderRadius="20px"
+                h="110px"
+                bg="rgba(200,170,255,0.05)"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                position="relative"
+                overflow="hidden"
+                cursor="pointer"
+              >
+                <Text fontFamily="heading" fontSize="14px" color="#B0A0C8">
+                  ここにドロップまたはクリック
+                </Text>
+                <Box
+                  as="input"
+                  type="file"
+                  accept="image/*"
+                  position="absolute"
+                  inset={0}
+                  opacity={0}
+                  cursor="pointer"
+                  {...register("image", { required: "画像は必須です" })}
+                />
+              </Box>
+              <FormErrorMessage>{errors.image?.message}</FormErrorMessage>
+            </FormControl>
+
+            {/* Content */}
+            <FormControl isInvalid={!!errors.content}>
+              <Text
+                fontFamily="heading"
+                fontSize="13px"
+                fontWeight="600"
+                color="#6650A0"
+                mb={2}
+              >
+                気持ち・メモ
+              </Text>
+              <Textarea
+                placeholder="今日は推しと何があった？"
+                rows={5}
+                bg="rgba(255,255,255,0.65)"
+                style={{ backdropFilter: "blur(8px)" }}
+                border="1px solid"
+                borderColor="rgba(200,170,255,0.45)"
+                borderRadius="20px"
+                fontFamily="body"
+                fontSize="14px"
+                color="#1A0840"
+                _placeholder={{ color: "#B0A0C8" }}
+                _focus={{
+                  borderColor: "#FFB0D8",
+                  boxShadow: "0 0 0 3px rgba(255,110,180,0.12)",
+                  outline: "none",
+                }}
+                {...register("content", { required: "説明文の入力は必須です" })}
+              />
+              <FormErrorMessage>{errors.content?.message}</FormErrorMessage>
+            </FormControl>
+
+            {/* Submit */}
+            <Button
+              type="submit"
+              isDisabled={!isValid || isSubmitting}
+              isLoading={isSubmitting}
+              bg="#FF6EB4"
+              color="white"
+              borderRadius="full"
+              fontFamily="heading"
+              fontWeight="600"
+              fontSize="16px"
+              py={6}
+              _hover={{ bg: "#DD3888" }}
+              _disabled={{ opacity: 0.5, cursor: "not-allowed" }}
+            >
+              投稿する ✦
+            </Button>
+
+            {errorMessage && (
+              <Alert status="error" borderRadius="xl">
+                <AlertIcon />
+                投稿に失敗しました。{errorMessage}
+              </Alert>
+            )}
+          </VStack>
+        </form>
+      </Box>
+    </Box>
   );
 };
