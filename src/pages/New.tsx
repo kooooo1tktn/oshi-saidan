@@ -8,6 +8,7 @@ import {
   Textarea,
   Alert,
   AlertIcon,
+  Image
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -28,6 +29,7 @@ export const New = () => {
 
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -38,6 +40,13 @@ export const New = () => {
         setErrorMessage(error.message);
       }
     }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if(e.target.files === null) return;
+    const image = e.target.files[0];
+    const previewUrl = URL.createObjectURL(image);
+    setImagePreview(previewUrl);
   };
 
   return (
@@ -81,7 +90,7 @@ export const New = () => {
               <Box
                 border="2px dashed rgba(200,170,255,0.55)"
                 borderRadius="20px"
-                h="110px"
+                h={imagePreview ? "auto" : "300px"}
                 bg="rgba(200,170,255,0.05)"
                 display="flex"
                 alignItems="center"
@@ -90,9 +99,11 @@ export const New = () => {
                 overflow="hidden"
                 cursor="pointer"
               >
-                <Text fontFamily="heading" fontSize="14px" color="#B0A0C8">
-                  ここにドロップまたはクリック
-                </Text>
+                {imagePreview ? <Image src={imagePreview} /> : (
+                  <Text fontFamily="heading" fontSize="14px" color="#B0A0C8">
+                    ここにドロップまたはクリック
+                  </Text>
+                )}
                 <Box
                   as="input"
                   type="file"
@@ -101,7 +112,10 @@ export const New = () => {
                   inset={0}
                   opacity={0}
                   cursor="pointer"
-                  {...register("image", { required: "画像は必須です" })}
+                  {...register("image", {
+                    required: "画像は必須です",
+                    onChange: handleImageChange,
+                  })}
                 />
               </Box>
               <FormErrorMessage>{errors.image?.message}</FormErrorMessage>

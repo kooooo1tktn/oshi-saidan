@@ -30,7 +30,7 @@ export function getImageUrl(path: string) {
     .storage
     .from('post-images')
     .getPublicUrl(path);
-    return data.publicUrl;
+  return data.publicUrl;
 }
 
 // 投稿処理
@@ -40,16 +40,16 @@ export async function createPosts(image: File, content: string) {
     .storage
     .from('post-images')
     .upload(`posts/${crypto.randomUUID()}`, image)
-    if (uploadError) {
-      throw new Error(`画像のアップロードに失敗しました: ${uploadError.message}`);
-    }
+  if (uploadError) {
+    throw new Error(`画像のアップロードに失敗しました: ${uploadError.message}`);
+  }
 
   // DBへのインサート処理
   const { error: insertError } = await supabase
     .from("posts")
     .insert({ description: content, image_url: data.path });
-    if (insertError) {
-      throw new Error(`データベースへのインサートに失敗しました: ${insertError.message}`);
-    }
-    return data;
+  if (insertError) {
+    throw new Error(`データベースへのインサートに失敗しました: ${insertError.message}`);
+  }
+  return data;
 }

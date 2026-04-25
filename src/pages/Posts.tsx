@@ -1,4 +1,4 @@
-import { Box, Text, Spinner, Center } from "@chakra-ui/react";
+import { Box, Text, Spinner, Center, Image } from "@chakra-ui/react";
 import { useParams, Link } from "react-router-dom";
 import { getPostById, getImageUrl } from "../supabase/supabaseFunctions";
 import { useQuery } from "@tanstack/react-query";
@@ -66,8 +66,7 @@ export const Posts = () => {
         overflow="hidden"
         boxShadow="0 4px 24px rgba(100,70,200,0.10)"
       >
-        <Box
-          as="img"
+        <Image
           src={imageUrl}
           alt="投稿画像"
           width="100%"
