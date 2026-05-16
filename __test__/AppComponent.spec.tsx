@@ -1,24 +1,24 @@
-import App from "../src/App";
-import { render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ChakraProvider } from "@chakra-ui/react";
+import App from "../src/App";
+import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
 
 // React Routerのモック
 jest.mock("react-router-dom", () => ({
   BrowserRouter: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
+    <div>{ children }</div>
   ),
   Routes: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
+    <div>{ children }</div>
   ),
-  Route: ({ element }: { element: React.ReactNode }) => <div>{element}</div>,
+  Route: ({ element }: { element: React.ReactNode }) => <div>{ element }</div>,
   Outlet: () => <div />,
   useParams: jest.fn(() => ({ id: '1' })),
   useNavigate: () => jest.fn(),
   Link: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
+    <div>{ children }</div>
   )
 }));
 
@@ -29,8 +29,8 @@ jest.mock("../src/supabase/supabaseFunctions.ts", () => ({
   getImageUrl: jest.fn(() => Promise.resolve([])),
 }));
 
-describe("title", () => {
-  it("should render title", async () => {
+describe("タイトル", () => {
+  it("タイトルが表示されること", async () => {
     const queryClient = new QueryClient();
 
     render(
