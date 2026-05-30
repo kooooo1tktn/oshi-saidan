@@ -8,24 +8,24 @@ import "@testing-library/jest-dom";
 // React Routerのモック
 jest.mock("react-router-dom", () => ({
   BrowserRouter: ({ children }: { children: React.ReactNode }) => (
-    <div>{ children }</div>
+    <div>{children}</div>
   ),
   Routes: ({ children }: { children: React.ReactNode }) => (
-    <div>{ children }</div>
+    <div>{children}</div>
   ),
-  Route: ({ element }: { element: React.ReactNode }) => <div>{ element }</div>,
+  Route: ({ element }: { element: React.ReactNode }) => <div>{element}</div>,
   Outlet: () => <div />,
-  useParams: jest.fn(() => ({ id: '1' })),
+  useParams: jest.fn(() => ({ id: "1" })),
   useNavigate: () => jest.fn(),
-  Link: ({ children }: { children: React.ReactNode }) => (
-    <div>{ children }</div>
-  )
+  Link: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 // Supabaseのモック
 jest.mock("../src/supabase/supabaseFunctions.ts", () => ({
-  getPosts: jest.fn(() => Promise.resolve([{id: 1, description: "test", image_url: ""}])),
-  getPostById: jest.fn(() => Promise.resolve({id: 1, description: "test"})),
+  getPosts: jest.fn(() =>
+    Promise.resolve([{ id: 1, description: "test", image_url: "" }]),
+  ),
+  getPostById: jest.fn(() => Promise.resolve({ id: 1, description: "test" })),
   getImageUrl: jest.fn(() => Promise.resolve([])),
 }));
 
