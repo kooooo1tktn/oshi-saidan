@@ -26,6 +26,7 @@ export const New = () => {
     register,
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
+    reset
   } = useForm<FormData>({ mode: "onBlur" });
 
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ export const New = () => {
   const onSubmit = async (data: FormData) => {
     try {
       await createPosts(data.image[0], data.content);
+      reset();
       navigate("/");
     } catch (error) {
       if (error instanceof Error) {
