@@ -8,7 +8,8 @@ import {
   Textarea,
   Alert,
   AlertIcon,
-  Image
+  Image,
+  HStack
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -99,7 +100,9 @@ export const New = () => {
                 overflow="hidden"
                 cursor="pointer"
               >
-                {imagePreview ? <Image src={imagePreview} /> : (
+                {imagePreview ? (
+                  <Image src={imagePreview} />
+                ) : (
                   <Text fontFamily="heading" fontSize="14px" color="#B0A0C8">
                     ここにドロップまたはクリック
                   </Text>
@@ -154,23 +157,44 @@ export const New = () => {
               <FormErrorMessage>{errors.content?.message}</FormErrorMessage>
             </FormControl>
 
-            {/* Submit */}
-            <Button
-              type="submit"
-              isDisabled={!isValid || isSubmitting}
-              isLoading={isSubmitting}
-              bg="#FF6EB4"
-              color="white"
-              borderRadius="full"
-              fontFamily="heading"
-              fontWeight="600"
-              fontSize="16px"
-              py={6}
-              _hover={{ bg: "#DD3888" }}
-              _disabled={{ opacity: 0.5, cursor: "not-allowed" }}
-            >
-              投稿する ✦
-            </Button>
+            <HStack spacing={4} justify="center" width="100%">
+              {/* キャンセル */}
+              <Button
+                type="button"
+                onClick={() => navigate("/")}
+                bg="#E4DFF0"
+                color="#6650A0"
+                border="1px solid"
+                borderColor="rgba(200,170,255,0.45)"
+                borderRadius="full"
+                fontFamily="heading"
+                fontWeight="600"
+                fontSize="16px"
+                py={6}
+                _hover={{ bg: "#C8BFE0" }}
+                flex={1}
+              >
+                キャンセル
+              </Button>
+              {/* Submit */}
+              <Button
+                type="submit"
+                isDisabled={!isValid || isSubmitting}
+                isLoading={isSubmitting}
+                bg="#FF6EB4"
+                color="white"
+                borderRadius="full"
+                fontFamily="heading"
+                fontWeight="600"
+                fontSize="16px"
+                py={6}
+                _hover={{ bg: "#DD3888" }}
+                _disabled={{ opacity: 0.5, cursor: "not-allowed" }}
+                flex={1}
+              >
+                投稿する ✦
+              </Button>
+            </HStack>
 
             {errorMessage && (
               <Alert status="error" borderRadius="xl">
