@@ -88,7 +88,7 @@ export const New = () => {
                 color="#6650A0"
                 mb={2}
               >
-                画像
+                投稿画像
               </Text>
               <Box
                 border="2px dashed rgba(200,170,255,0.55)"

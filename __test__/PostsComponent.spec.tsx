@@ -93,5 +93,4 @@ describe("投稿詳細ページ", () => {
       await screen.findByText(/投稿の取得に失敗しました/),
     ).toBeInTheDocument();
   });
-
 });
