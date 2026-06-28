@@ -2,8 +2,9 @@ import React from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { New } from "../src/pages/New";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event"; 
+import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
+import { createPosts } from "../src/supabase/supabaseFunctions";
 
 // モック：React Router
 const mockNavigate = jest.fn();
@@ -57,7 +58,7 @@ describe("新規投稿ページ", () => {
 
     fireEvent.change(textarea, { target: { value: "説明文テスト入力"}});
     fireEvent.blur(textarea);
-    
+
     expect(screen.getByRole("button", { name: /投稿する/ })).toBeDisabled();
   });
 
@@ -100,7 +101,7 @@ describe("新規投稿ページ", () => {
       expect(screen.getByRole("button", { name: /投稿する/ })).toBeEnabled();
     });
   });
-  
+
   it("キャンセルボタンは常にenabledであること", () => {
     render(
       <ChakraProvider>
@@ -137,5 +138,60 @@ describe("新規投稿ページ", () => {
 
     await userEvent.click(screen.getByRole("button", { name: "キャンセル" }));
     expect(mockNavigate).toHaveBeenCalledWith("/");
+  });
+
+  it("投稿成功後、一覧画面に遷移しフォームがリセットされること", async () => {
+    const { container } = render(
+      <ChakraProvider>
+        <New />
+      </ChakraProvider>,
+    );
+
+    const user = userEvent.setup();
+    const fileInput = container.querySelector('input[type="file"]',) as HTMLInputElement;
+    const mockFile = new File(["dummy"], "test.jpeg", { type: "image/jpeg", });
+    const textarea = screen.getByRole("textbox");
+
+    await user.upload(fileInput, mockFile);
+    fireEvent.blur(fileInput);
+    fireEvent.change(textarea, { target: { value: "説明文テスト入力" } });
+    fireEvent.blur(textarea);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /投稿する/ })).toBeEnabled();
+    });
+    await userEvent.click(screen.getByRole("button", { name: /投稿する/}));
+
+    await waitFor(() => {
+      expect(textarea).toHaveValue("");
+    });
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith("/");
+    });
+  });
+
+  it("投稿失敗時、エラーメッセージが表示されること", async () => {
+    (createPosts as jest.Mock).mockRejectedValueOnce(new Error("Not found"));
+
+    const { container } = render(
+      <ChakraProvider>
+        <New />
+      </ChakraProvider>,
+    );
+
+    const user = userEvent.setup();
+    const fileInput = container.querySelector('input[type="file"]',) as HTMLInputElement;
+    const mockFile = new File(["dummy"], "test.jpeg", { type: "image/jpeg" });
+    const textarea = screen.getByRole("textbox");
+
+    await user.upload(fileInput, mockFile);
+    fireEvent.blur(fileInput);
+    fireEvent.change(textarea, { target: { value: "説明文テスト入力" } });
+    fireEvent.blur(textarea);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /投稿する/ }),).toBeEnabled();
+    });
+    await userEvent.click(screen.getByRole("button", { name: /投稿する/ }));
+
+    expect(await screen.findByText(/投稿に失敗しました。/)).toBeInTheDocument();
   });
 });
