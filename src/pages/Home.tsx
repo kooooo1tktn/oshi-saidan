@@ -47,7 +47,7 @@ export const Home = () => {
         color="#1A0840"
         mb={6}
       >
-        投稿一覧
+        ホーム
       </Text>
 
       <Grid

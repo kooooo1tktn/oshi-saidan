@@ -63,7 +63,7 @@ export const Header = () => {
             _hover={{ bg: "#DD3888" }}
             transition="background 0.2s"
           >
-            ＋ 新しい投稿
+            ＋ 投稿する
           </Text>
         </HStack>
       </Flex>

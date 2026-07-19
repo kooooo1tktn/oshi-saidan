@@ -1,4 +1,11 @@
-import { Box, Text, Spinner, Center, Image } from "@chakra-ui/react";
+import {
+  AspectRatio,
+  Box,
+  Text,
+  Spinner,
+  Center,
+  Image,
+} from "@chakra-ui/react";
 import { useParams, Link } from "react-router-dom";
 import { getPostById, getImageUrl } from "../supabase/supabaseFunctions";
 import { useQuery } from "@tanstack/react-query";
@@ -53,7 +60,7 @@ export const Posts = () => {
         display="inline-block"
         mb={6}
       >
-        ← 投稿一覧へ戻る
+        ← ホームへ戻る
       </Text>
 
       {/* Content card */}
@@ -64,16 +71,11 @@ export const Posts = () => {
         borderColor="rgba(200,170,255,0.45)"
         borderRadius="2xl"
         overflow="hidden"
-        boxShadow="0 4px 24px rgba(100,70,200,0.10)"
+        boxShadow="0 4px 24px rgba(100,70,200,0.10), 0 1px 6px rgba(100,70,200,0.06)"
       >
-        <Image
-          src={imageUrl}
-          alt="投稿画像"
-          width="100%"
-          maxH="420px"
-          objectFit="cover"
-          display="block"
-        />
+        <AspectRatio ratio={4 / 3}>
+          <Image src={imageUrl} alt="投稿画像" objectFit="cover" />
+        </AspectRatio>
 
         <Box p={8}>
           <Text

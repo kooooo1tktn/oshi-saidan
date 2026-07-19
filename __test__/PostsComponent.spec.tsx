@@ -61,7 +61,7 @@ describe("投稿詳細ページ", () => {
     );
 
     expect(
-      await screen.findByRole("link", { name: "← 投稿一覧へ戻る" }),
+      await screen.findByRole("link", { name: "← ホームへ戻る" }),
     ).toBeInTheDocument();
   });
 
@@ -74,7 +74,7 @@ describe("投稿詳細ページ", () => {
       </ChakraProvider>,
     );
 
-    const backButton = await screen.findByRole("link", { name: "← 投稿一覧へ戻る" });
+    const backButton = await screen.findByRole("link", { name: "← ホームへ戻る" });
     expect(backButton).toHaveAttribute("href", "/");
   });
 
