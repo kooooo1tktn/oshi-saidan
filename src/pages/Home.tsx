@@ -1,4 +1,4 @@
-import { Box, Grid, Text, Spinner, Center } from "@chakra-ui/react";
+import { Box, VStack, Text, Spinner, Center } from "@chakra-ui/react";
 import { getPosts } from "../supabase/supabaseFunctions";
 import { useQuery } from "@tanstack/react-query";
 import { Post } from "../types";
@@ -39,7 +39,7 @@ export const Home = () => {
   }
 
   return (
-    <Box maxW="1100px" mx="auto" px={{ base: 4, lg: 12 }} py={10}>
+    <Box maxW="600px" mx="auto" px={{ base: 4, lg: 12 }} py={10}>
       <Text
         fontFamily="heading"
         fontSize="20px"
@@ -50,14 +50,11 @@ export const Home = () => {
         ホーム
       </Text>
 
-      <Grid
-        templateColumns={{ base: "1fr", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" }}
-        gap={5}
-      >
+      <VStack align="stretch" spacing={5}>
         {data.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
-      </Grid>
+      </VStack>
     </Box>
   );
 };

@@ -1,20 +1,30 @@
-import { Box, Flex, Text, HStack } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
-export const Header = () => {
+export const Sidebar = () => {
   return (
     <Box
       as="nav"
       position="sticky"
       top={0}
       zIndex={100}
-      h="64px"
-      px={12}
-      bg="rgba(248,246,255,0.78)"
-      style={{ backdropFilter: "blur(18px)" }}
-      borderBottom="1px solid rgba(200,170,255,0.28)"
+      flexShrink={0}
+      w={{ base: "100%", lg: "260px" }}
+      h={{ base: "64px", lg: "100vh" }}
+      px={{ base: 12, lg: 6 }}
+      bg={{ base: "rgba(248,246,255,0.78)", lg: "transparent" }}
+      sx={{ backdropFilter: { base: "blur(18px)", lg: "none" } }}
+      borderBottom={{ base: "1px solid rgba(200,170,255,0.28)", lg: "none" }}
+      borderRight={{ base: "none", lg: "1px solid rgba(200,170,255,0.28)" }}
     >
-      <Flex align="center" justify="space-between" h="full" maxW="1100px" mx="auto">
+      <Flex
+        direction={{ base: "row", lg: "column" }}
+        align={{ base: "center", lg: "stretch" }}
+        justify={{ base: "space-between", lg: "flex-start" }}
+        h="full"
+        py={{ lg: 8 }}
+        gap={{ lg: 8 }}
+      >
         {/* Logo */}
         <Text
           as={Link}
@@ -34,7 +44,11 @@ export const Header = () => {
         </Text>
 
         {/* Nav links */}
-        <HStack spacing={6}>
+        <Flex
+          direction={{ base: "row", lg: "column" }}
+          align={{ base: "center", lg: "stretch" }}
+          gap={{ base: 6, lg: 4 }}
+        >
           <Text
             as={Link}
             to="/"
@@ -59,13 +73,14 @@ export const Header = () => {
             borderRadius="full"
             px={5}
             py={2}
+            textAlign="center"
             textDecoration="none"
             _hover={{ bg: "#DD3888" }}
             transition="background 0.2s"
           >
             ＋ 投稿する
           </Text>
-        </HStack>
+        </Flex>
       </Flex>
     </Box>
   );

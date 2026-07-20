@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { AspectRatio, Box, Image, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { Post } from "../types";
 import { getImageUrl } from "../supabase/supabaseFunctions";
@@ -31,15 +31,9 @@ export const PostCard = ({ post }: Props) => {
       }}
     >
       {/* Card image */}
-      <Box
-        as="img"
-        src={imageUrl}
-        alt="投稿画像"
-        width="100%"
-        height="180px"
-        objectFit="cover"
-        display="block"
-      />
+      <AspectRatio ratio={16 / 9}>
+        <Image src={imageUrl} alt="投稿画像" objectFit="cover" />
+      </AspectRatio>
 
       {/* Card body */}
       <Box p="16px 20px 20px">
