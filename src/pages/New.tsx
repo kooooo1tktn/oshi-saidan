@@ -9,7 +9,7 @@ import {
   Alert,
   AlertIcon,
   Image,
-  HStack
+  HStack,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -26,7 +26,7 @@ export const New = () => {
     register,
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
-    reset
+    reset,
   } = useForm<FormData>({ mode: "onBlur" });
 
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ export const New = () => {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if(e.target.files === null) return;
+    if (e.target.files === null) return;
     const image = e.target.files[0];
     const previewUrl = URL.createObjectURL(image);
     setImagePreview(previewUrl);

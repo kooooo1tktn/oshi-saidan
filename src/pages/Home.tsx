@@ -13,7 +13,12 @@ export const Home = () => {
   if (isLoading) {
     return (
       <Center py={20}>
-        <Spinner color="#FF6EB4" size="xl" thickness="3px" data-testid="loading-spinner" />
+        <Spinner
+          color="#FF6EB4"
+          size="xl"
+          thickness="3px"
+          data-testid="loading-spinner"
+        />
       </Center>
     );
   }
