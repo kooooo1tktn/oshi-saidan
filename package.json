@@ -7,8 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json",
     "preview": "vite preview",
-    "test": "jest"
+    "test": "jest",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@chakra-ui/react": "^2.10.9",
@@ -16,36 +19,36 @@
     "@emotion/styled": "^11.14.1",
     "@supabase/supabase-js": "^2.53.0",
     "@tanstack/react-query": "^5.95.2",
-    "@types/jest": "^30.0.0",
-    "@types/react-router-dom": "^5.3.3",
-    "dotenv": "^17.0.1",
     "firebase": "^11.10.0",
     "framer-motion": "^12.33.0",
-    "jest": "^30.0.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.71.2",
-    "react-router-dom": "^7.7.1",
-    "ts-jest": "^29.4.0",
-    "vite-plugin-env-compatible": "^2.0.1"
+    "react-router-dom": "^7.7.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.5.2",
+    "dotenv": "^17.0.1",
     "eslint": "^9.29.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.2.0",
     "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.0.4",
     "jest-environment-jsdom": "^30.0.4",
     "jest-transform-stub": "^2.0.0",
+    "prettier": "3.9.6",
+    "ts-jest": "^29.4.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.34.1",
-    "vite": "^7.0.0"
+    "vite": "^7.0.0",
+    "vite-plugin-env-compatible": "^2.0.1"
   }
 }
