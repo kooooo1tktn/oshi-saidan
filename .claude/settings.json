@@ -1,0 +1,53 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -d node_modules ] || npm ci",
+            "timeout": 300
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | grep -E '\\.(ts|tsx|js|mjs|json|css|md)$' | xargs -r npx prettier --write --ignore-unknown"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "このターンで src/ または __test__/ 配下のソースコードを編集したにもかかわらず、npm run lint / npm run typecheck / npm run test のいずれも実行していない場合にのみ {\"ok\": false, \"reason\": \"ソースを変更したので /verify を実行し、結果を提示してください\"} を返すこと。ソースを編集していない場合、質問に回答しただけの場合、ドキュメントや設定ファイルのみを変更した場合、既に検証コマンドを実行して結果を提示している場合は {\"ok\": true} を返すこと。"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(npm ci)",
+      "Bash(npm run lint)",
+      "Bash(npm run typecheck)",
+      "Bash(npm run test)",
+      "Bash(npm run build)",
+      "Bash(npm run format:check)",
+      "Bash(npx prettier *)",
+      "Bash(npx tsc *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git branch *)"
+    ]
+  }
+}
