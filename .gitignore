@@ -10,20 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
-
-# 環境変数。`*.env` だけでは `.env.local` や `.env.production` にマッチしないため、
-# ローカル用の環境ファイルをコミットしてしまう穴があった。
-.env
-.env.*
 *.env
-!.env.example
-
-# ビルド成果物・デプロイキャッシュ
-.firebase/
-*.tsbuildinfo
-
-# claude code local settings
-.claude/settings.local.json
 
 # Editor directories and files
 .vscode/*

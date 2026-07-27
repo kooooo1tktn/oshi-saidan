@@ -24,12 +24,7 @@ export const Layout = () => {
 
       {/* Foreground content */}
       <Box position="relative" zIndex={1}>
-        <Flex
-          direction={{ base: "column", lg: "row" }}
-          maxW="1100px"
-          mx="auto"
-          minH="100vh"
-        >
+        <Flex direction={{ base: "column", lg: "row" }} maxW="1100px" mx="auto" minH="100vh">
           <Sidebar />
           <Box as="main" flex="1" minW={0}>
             <Outlet />

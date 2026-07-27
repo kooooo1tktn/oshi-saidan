@@ -16,7 +16,7 @@ jest.mock("react-router-dom", () => ({
 // モック：Supabase
 jest.mock("../src/supabase/supabaseFunctions", () => ({
   createPosts: jest.fn(() => Promise.resolve()),
-}));
+}))
 
 // モック：URL.createObjectURL
 global.URL.createObjectURL = jest.fn(() => "mock-url");
@@ -24,43 +24,39 @@ global.URL.createObjectURL = jest.fn(() => "mock-url");
 describe("新規投稿ページ", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
+  })
 
   it("投稿作成画面に投稿ボタンとキャンセルボタンがあること", () => {
     render(
       <ChakraProvider>
         <New />
-      </ChakraProvider>,
+      </ChakraProvider>
     );
 
-    expect(
-      screen.getByRole("button", { name: /投稿する/ }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "キャンセル" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /投稿する/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "キャンセル" })).toBeInTheDocument();
   });
 
   it("初期状態は投稿ボタンがdisabledであること", () => {
     render(
       <ChakraProvider>
-        <New />
-      </ChakraProvider>,
+        <New/>
+      </ChakraProvider>
     );
 
-    expect(screen.getByRole("button", { name: /投稿する/ })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /投稿する/})).toBeDisabled();
   });
 
   it("投稿画像未選択の場合、投稿ボタンがdisabledであること", () => {
     render(
       <ChakraProvider>
         <New />
-      </ChakraProvider>,
+      </ChakraProvider>
     );
 
     const textarea = screen.getByRole("textbox");
 
-    fireEvent.change(textarea, { target: { value: "説明文テスト入力" } });
+    fireEvent.change(textarea, { target: { value: "説明文テスト入力"}});
     fireEvent.blur(textarea);
 
     expect(screen.getByRole("button", { name: /投稿する/ })).toBeDisabled();
@@ -73,12 +69,10 @@ describe("新規投稿ページ", () => {
       </ChakraProvider>,
     );
 
-    const fileInput = container.querySelector(
-      'input[type="file"]',
-    ) as HTMLInputElement;
+    const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
     const mockFile = new File(["dummy"], "test.jpeg", { type: "image/jpeg" });
 
-    fireEvent.change(fileInput, { target: { files: [mockFile] } });
+    fireEvent.change(fileInput, { target: { files: [mockFile] }});
     fireEvent.blur(fileInput);
 
     await waitFor(() => {
@@ -94,10 +88,8 @@ describe("新規投稿ページ", () => {
     );
 
     const user = userEvent.setup();
-    const fileInput = container.querySelector(
-      'input[type="file"]',
-    ) as HTMLInputElement;
-    const mockFile = new File(["dummy"], "test.jpeg", { type: "image/jpeg" });
+    const fileInput = container.querySelector('input[type="file"]',) as HTMLInputElement;
+    const mockFile = new File(["dummy"], "test.jpeg", { type: "image/jpeg", });
     const textarea = screen.getByRole("textbox");
 
     await user.upload(fileInput, mockFile);
@@ -121,24 +113,20 @@ describe("新規投稿ページ", () => {
   });
 
   it("バリデーションエラーメッセージが表示されること", async () => {
-    const { container } = render(
+    const {container} = render(
       <ChakraProvider>
         <New />
       </ChakraProvider>,
     );
 
-    const fileInput = container.querySelector(
-      'input[type="file"]',
-    ) as HTMLInputElement;
+    const fileInput = container.querySelector('input[type="file"]',) as HTMLInputElement;
     const textarea = screen.getByRole("textbox");
 
     fireEvent.blur(fileInput);
     fireEvent.blur(textarea);
 
     expect(await screen.findByText("画像は必須です")).toBeInTheDocument();
-    expect(
-      await screen.findByText("説明文の入力は必須です"),
-    ).toBeInTheDocument();
+    expect(await screen.findByText("説明文の入力は必須です")).toBeInTheDocument();
   });
 
   it("キャンセルボタンで投稿一覧画面に戻れること", async () => {
@@ -160,10 +148,8 @@ describe("新規投稿ページ", () => {
     );
 
     const user = userEvent.setup();
-    const fileInput = container.querySelector(
-      'input[type="file"]',
-    ) as HTMLInputElement;
-    const mockFile = new File(["dummy"], "test.jpeg", { type: "image/jpeg" });
+    const fileInput = container.querySelector('input[type="file"]',) as HTMLInputElement;
+    const mockFile = new File(["dummy"], "test.jpeg", { type: "image/jpeg", });
     const textarea = screen.getByRole("textbox");
 
     await user.upload(fileInput, mockFile);
@@ -173,7 +159,7 @@ describe("新規投稿ページ", () => {
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /投稿する/ })).toBeEnabled();
     });
-    await userEvent.click(screen.getByRole("button", { name: /投稿する/ }));
+    await userEvent.click(screen.getByRole("button", { name: /投稿する/}));
 
     await waitFor(() => {
       expect(textarea).toHaveValue("");
@@ -193,9 +179,7 @@ describe("新規投稿ページ", () => {
     );
 
     const user = userEvent.setup();
-    const fileInput = container.querySelector(
-      'input[type="file"]',
-    ) as HTMLInputElement;
+    const fileInput = container.querySelector('input[type="file"]',) as HTMLInputElement;
     const mockFile = new File(["dummy"], "test.jpeg", { type: "image/jpeg" });
     const textarea = screen.getByRole("textbox");
 
@@ -204,7 +188,7 @@ describe("新規投稿ページ", () => {
     fireEvent.change(textarea, { target: { value: "説明文テスト入力" } });
     fireEvent.blur(textarea);
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /投稿する/ })).toBeEnabled();
+      expect(screen.getByRole("button", { name: /投稿する/ }),).toBeEnabled();
     });
     await userEvent.click(screen.getByRole("button", { name: /投稿する/ }));
 

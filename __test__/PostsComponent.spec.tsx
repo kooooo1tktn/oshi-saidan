@@ -8,33 +8,34 @@ import { getPostById } from "../src/supabase/supabaseFunctions";
 
 // モック：React Router
 jest.mock("react-router-dom", () => ({
-  Link: ({ to, children }: { to: string; children: React.ReactNode }) => (
+  Link: ({ to, children }: {to: string, children: React.ReactNode }) => (
     <a href={to}>{children}</a>
   ),
-  useParams: jest.fn(() => ({ id: "1" })),
+  useParams: jest.fn(() => ({id: "1"})),
 }));
 
 // モック：Supabase
 jest.mock("../src/supabase/supabaseFunctions", () => ({
-  getPostById: jest.fn(() =>
-    Promise.resolve({
-      id: 1,
-      description: "test1",
-      image_url: "test-image.jpg",
-    }),
+  getPostById: jest.fn(
+    () =>
+      Promise.resolve({
+        id: 1,
+        description: "test1",
+        image_url: "test-image.jpg",
+      }),
   ),
   getImageUrl: jest.fn(() => "https://example.com/test-image.jpg"),
 }));
 
 describe("投稿詳細ページ", () => {
-  let queryClient: QueryClient;
-  beforeEach(() => {
-    queryClient = new QueryClient({
-      defaultOptions: {
-        queries: { retry: false },
-      },
-    });
-  });
+    let queryClient: QueryClient;
+    beforeEach(() => {
+      queryClient = new QueryClient({
+        defaultOptions: {
+          queries: { retry: false },
+        },
+      });
+    })
 
   it("投稿画像と説明文が表示されること", async () => {
     render(
@@ -73,9 +74,7 @@ describe("投稿詳細ページ", () => {
       </ChakraProvider>,
     );
 
-    const backButton = await screen.findByRole("link", {
-      name: "← ホームへ戻る",
-    });
+    const backButton = await screen.findByRole("link", { name: "← ホームへ戻る" });
     expect(backButton).toHaveAttribute("href", "/");
   });
 

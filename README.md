@@ -1,85 +1,69 @@
-# 推し祭壇アプリ（oshi-saidan）
+# React + TypeScript + Vite
 
-推しの祭壇（グッズやアクリルスタンドを並べたディスプレイ）の写真とひとことメモを投稿し、
-みんなの祭壇を眺められる小さな SPA。
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-- 投稿一覧（`/`）
-- 投稿詳細（`/posts/:id`）
-- 新規投稿（`/new`）— 画像1枚 + 説明文
+Currently, two official plugins are available:
 
-ログインやユーザーアカウントはなく、投稿は匿名かつ全体公開。編集・削除・いいねも未実装。
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## 技術構成
+## Expanding the ESLint configuration
 
-| 領域         | 使っているもの                                                               |
-| ------------ | ---------------------------------------------------------------------------- |
-| ビルド       | Vite 7                                                                       |
-| UI           | React 19 + **Chakra UI v2**                                                  |
-| ルーティング | React Router v7                                                              |
-| サーバー状態 | TanStack Query v5                                                            |
-| フォーム     | React Hook Form                                                              |
-| バックエンド | Supabase（Postgres の `posts` テーブル + Storage の `post-images` バケット） |
-| ホスティング | Firebase Hosting                                                             |
-| テスト       | Jest + Testing Library                                                       |
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-## セットアップ
+```js
+export default tseslint.config([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-```bash
-cp .env.example .env        # VITE_SUPABASE_URL と VITE_SUPABASE_ANON_KEY の両方が必須
-npm ci
-npm run dev
+      // Remove tseslint.configs.recommended and replace with this
+      ...tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      ...tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      ...tseslint.configs.stylisticTypeChecked,
+
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-環境変数が欠けていてもビルドは通ってしまい、実行時に Supabase のエラーになる
-（`src/supabase/supabase.ts` が非 null アサーションで読んでいるため）。
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-## コマンド
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-| 目的                   | コマンド                                  |
-| ---------------------- | ----------------------------------------- |
-| 開発サーバー           | `npm run dev`                             |
-| Lint                   | `npm run lint`                            |
-| 型チェック             | `npm run typecheck`                       |
-| テスト                 | `npm run test`                            |
-| ビルド                 | `npm run build`                           |
-| 整形                   | `npm run format` / `npm run format:check` |
-| ビルド結果のプレビュー | `npm run preview`                         |
-
-Makefile 経由のデプロイ:
-
-```bash
-make preview   # ビルドして Firebase のプレビューチャンネルへ
-make deploy    # ビルドして本番へ
+export default tseslint.config([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
-
-## データモデル
-
-```ts
-interface Post {
-  id: number;
-  description: string;
-  image_url: string; // URL ではなく Supabase Storage 上のパス
-}
-```
-
-`image_url` は Storage のオブジェクトパス（`posts/<uuid>`）であって URL ではない。
-表示するときは必ず `getImageUrl()` を通して公開 URL に変換する。
-フィールドが snake_case なのは Postgres の列名をそのまま使っているため。
-
-Supabase へのアクセスは `src/supabase/supabaseFunctions.ts` に集約されている
-（`getPosts` / `getPostById` / `getImageUrl` / `createPosts`）。
-コンポーネントから直接 Supabase クライアントを触らないこと。
-
-## CI/CD
-
-`.github/workflows/main.yml` が以下を実行する。
-
-- **PR と `main` への push**: 整形チェック → lint → 型チェック → テスト → ビルド
-- **`main` への push のみ**: Firebase のプレビューチャンネルへデプロイ
-
-必要な GitHub Secrets: `SUPABASE_URL`、`SUPABASE_ANON_KEY`、`FIREBASE_SERVICE_ACCOUNT`。
-
-## Claude Code を使う場合
-
-`CLAUDE.md` に落とし穴とコード規約をまとめてある。
-設定の意図と使い方は `docs/claude-code-guide.md` を参照。
