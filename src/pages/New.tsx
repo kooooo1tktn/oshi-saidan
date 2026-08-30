@@ -1,4 +1,5 @@
 import {
+  AspectRatio,
   Box,
   Button,
   VStack,
@@ -9,7 +10,8 @@ import {
   Alert,
   AlertIcon,
   Image,
-  HStack
+  HStack,
+  Flex
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -93,21 +95,21 @@ export const New = () => {
               <Box
                 border="2px dashed rgba(200,170,255,0.55)"
                 borderRadius="20px"
-                h={imagePreview ? "auto" : "300px"}
                 bg="rgba(200,170,255,0.05)"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
                 position="relative"
                 overflow="hidden"
                 cursor="pointer"
               >
                 {imagePreview ? (
-                  <Image src={imagePreview} />
+                  <AspectRatio ratio={16 / 9}>
+                    <Image src={imagePreview} objectFit="cover" />
+                  </AspectRatio>
                 ) : (
-                  <Text fontFamily="heading" fontSize="14px" color="#B0A0C8">
-                    ここにドロップまたはクリック
-                  </Text>
+                  <Flex h="300px" align="center" justify="center">
+                    <Text fontFamily="heading" fontSize="14px" color="#B0A0C8">
+                      ここにドロップまたはクリック
+                    </Text>
+                  </Flex>
                 )}
                 <Box
                   as="input"

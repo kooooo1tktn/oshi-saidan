@@ -1,6 +1,6 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
-import { Sidebar } from "./Sidebar";
+import { Header } from "./Header";
 
 export const Layout = () => {
   return (
@@ -24,12 +24,10 @@ export const Layout = () => {
 
       {/* Foreground content */}
       <Box position="relative" zIndex={1}>
-        <Flex direction={{ base: "column", lg: "row" }} maxW="1100px" mx="auto" minH="100vh">
-          <Sidebar />
-          <Box as="main" flex="1" minW={0}>
-            <Outlet />
-          </Box>
-        </Flex>
+        <Header />
+        <Box as="main">
+          <Outlet />
+        </Box>
       </Box>
     </Box>
   );
