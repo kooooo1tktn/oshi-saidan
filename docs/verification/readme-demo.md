@@ -87,11 +87,13 @@ DB作成と権限はMCPからSQLを実行し、バケットもMCPで作成して
 | 公開デモのサーバー制御 | 🔲 未着手 | 一般利用者のDB・Storage追加/更新/削除を拒否。既存データが変わらないことも確認 |
 | 配信ガード・live配信 | 🔲 未着手 | mainのCI成功・モード・Supabase ref・Firebase project/siteの一致を条件に固定URLへ配信 |
 | 直接アクセス | 🔲 未検証 | 公開先の新規投稿・実在投稿詳細に直接アクセス・再読み込み可能。rewriteの設定のみ追加済み |
-| PRでCI実行 | 🔲 未実行 | lint・テスト・両設定ビルドが実際のGitHub Actionsで成功 |
+| PRでCI実行 | ✅ 初回成功 | [PR #1](https://github.com/kooooo1tktn/oshi-saidan/pull/1)の`54689e1`でlint・20テスト・両設定ビルド・CI requiredが成功。[実行記録](https://github.com/kooooo1tktn/oshi-saidan/actions/runs/35483370931)。後続コミットの結果はPRのChecksで確認する |
 | 必須チェックの失敗試験 | 🔲 未実施 | チェック失敗時にマージ不可・公開不可。設定不一致も配信不可 |
 | 録画・紹介動画 | 🔲 未着手 | デモ最終確認後、Devinで操作録画。60〜90秒の紹介動画をユーザーが確認して掲載 |
 
 ## 再現検証時に追記する欄
+
+初回CIでAction自身のNode.js 20ランタイムへの非推奨警告が出たため、公式の対応版Checkout 7.0.1 / setup-node 7.0.0へ更新しました。Action内部の実行環境とアプリのNode.jsは別で、アプリの検証版は22.15.0を維持します。CIのLinuxでの成功は、Windowsでの手順再現成功には含めません。
 
 | 実行者 / OS | 対象コミット | 事前導入済みソフト | README手順 | 期待結果 | 実際の結果 | 成功・失敗・未検証 | 証拠 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
