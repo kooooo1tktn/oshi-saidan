@@ -1,112 +1,66 @@
-name: CI/CD Pipeline
+name: CI
 
 on:
+  pull_request:
+    branches: [main]
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
-  issues: write
-  pull-requests: write
-  deployments: write
-  repository-projects: read
-  statuses: write
-
-env:
-  NODE_VERSION: "20"
 
 jobs:
-  # テストジョブ
-  test:
-    name: Test
+  checks:
+    name: Lint and tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test -- --runInBand
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run linter
-        run: npm run lint
-
-      - name: Run tests
-        run: npm run test
-
-  # ビルドジョブ
   build:
-    name: Build
+    name: Build (${{ matrix.mode }})
     runs-on: ubuntu-latest
-    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - mode: normal
+            demo: "false"
+          - mode: demo
+            demo: "true"
+    env:
+      # ビルド確認専用。実在の保存先・Secretsを使わず、配信もしない。
+      VITE_SUPABASE_URL: https://example.supabase.co
+      VITE_SUPABASE_ANON_KEY: ci-public-placeholder
+      VITE_DEMO_MODE: ${{ matrix.demo }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build project
-        run: npm run build
+  ci:
+    name: CI required
+    runs-on: ubuntu-latest
+    needs: [checks, build]
+    if: always()
+    steps:
+      - name: Require every check to succeed
         env:
-          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          CHECKS_RESULT: ${{ needs.checks.result }}
+          BUILD_RESULT: ${{ needs.build.result }}
+        run: test "$CHECKS_RESULT" = success && test "$BUILD_RESULT" = success
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-files
-          path: dist/
-
-  # デプロイジョブ(プレビュー環境)
-  deploy:
-    name: Deploy to Preview
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-files
-          path: dist/
-
-      - name: Deploy to Firebase Preview Channel
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          projectId: oshi-saidan
-          channelId: preview-${{ github.ref_name}}
-          expires: 7d
-        id: firebase_hosting_preview
-
-      - name: Debug Firebase outputs
-        run: |
-          echo "Details URL: ${{ steps.firebase_hosting_preview.outputs.details_url }}"
-          echo "Expire Time: ${{ steps.firebase_hosting_preview.outputs.expire_time }}"
+# 公開準備中は配信しない。
+# デモの送信制御・読取専用設定・採用素材・公開先の検証後に、
+# mainのCI成功と配信先照合を条件とするlive配信を追加する。
