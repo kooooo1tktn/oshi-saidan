@@ -5,6 +5,7 @@ import {
   VStack,
   Text,
   FormControl,
+  FormLabel,
   FormErrorMessage,
   Textarea,
   Alert,
@@ -17,6 +18,8 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { createPosts } from "../supabase/supabaseFunctions";
 import { useState } from "react";
+import { isDemoMode } from "../config/demo";
+import { DemoNotice } from "../components/DemoNotice";
 
 type FormData = {
   image: FileList;
@@ -36,6 +39,9 @@ export const New = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const onSubmit = async (data: FormData) => {
+    if (isDemoMode) {
+      return;
+    }
     try {
       await createPosts(data.image[0], data.content);
       reset();
@@ -74,16 +80,17 @@ export const New = () => {
         border="1px solid"
         borderColor="rgba(200,170,255,0.45)"
         borderRadius="2xl"
-        p={9}
+        p={{ base: 4, md: 9 }}
         maxW="560px"
         boxShadow="0 4px 24px rgba(100,70,200,0.10)"
         mx="auto"
       >
         <form onSubmit={handleSubmit(onSubmit)}>
           <VStack spacing={5} align="stretch">
+            {isDemoMode && <DemoNotice />}
             {/* Image upload */}
-            <FormControl isInvalid={!!errors.image}>
-              <Text
+            <FormControl id="post-image" isInvalid={!!errors.image}>
+              <FormLabel
                 fontFamily="heading"
                 fontSize="13px"
                 fontWeight="600"
@@ -91,7 +98,7 @@ export const New = () => {
                 mb={2}
               >
                 投稿画像
-              </Text>
+              </FormLabel>
               <Box
                 border="2px dashed rgba(200,170,255,0.55)"
                 borderRadius="20px"
@@ -99,13 +106,14 @@ export const New = () => {
                 position="relative"
                 overflow="hidden"
                 cursor="pointer"
+                _focusWithin={{ outline: "2px solid #6650A0", outlineOffset: "3px" }}
               >
                 {imagePreview ? (
                   <AspectRatio ratio={16 / 9}>
-                    <Image src={imagePreview} objectFit="cover" />
+                    <Image src={imagePreview} alt="選択した投稿画像のプレビュー" objectFit="cover" />
                   </AspectRatio>
                 ) : (
-                  <Flex h="300px" align="center" justify="center">
+                  <Flex h={{ base: "220px", md: "300px" }} align="center" justify="center">
                     <Text fontFamily="heading" fontSize="14px" color="#B0A0C8">
                       ここにドロップまたはクリック
                     </Text>
@@ -114,6 +122,7 @@ export const New = () => {
                 <Box
                   as="input"
                   type="file"
+                  id="post-image"
                   accept="image/*"
                   position="absolute"
                   inset={0}
@@ -127,10 +136,9 @@ export const New = () => {
               </Box>
               <FormErrorMessage>{errors.image?.message}</FormErrorMessage>
             </FormControl>
-
             {/* Content */}
-            <FormControl isInvalid={!!errors.content}>
-              <Text
+            <FormControl id="post-content" isInvalid={!!errors.content}>
+              <FormLabel
                 fontFamily="heading"
                 fontSize="13px"
                 fontWeight="600"
@@ -138,7 +146,7 @@ export const New = () => {
                 mb={2}
               >
                 気持ち・メモ
-              </Text>
+              </FormLabel>
               <Textarea
                 placeholder="今日は推しと何があった？"
                 rows={5}
@@ -160,7 +168,6 @@ export const New = () => {
               />
               <FormErrorMessage>{errors.content?.message}</FormErrorMessage>
             </FormControl>
-
             <HStack spacing={4} justify="center" width="100%">
               {/* キャンセル */}
               <Button
@@ -183,7 +190,7 @@ export const New = () => {
               {/* Submit */}
               <Button
                 type="submit"
-                isDisabled={!isValid || isSubmitting}
+                isDisabled={isDemoMode || !isValid || isSubmitting}
                 isLoading={isSubmitting}
                 bg="#FF6EB4"
                 color="white"
@@ -199,7 +206,6 @@ export const New = () => {
                 投稿する ✦
               </Button>
             </HStack>
-
             {errorMessage && (
               <Alert status="error" borderRadius="xl">
                 <AlertIcon />
