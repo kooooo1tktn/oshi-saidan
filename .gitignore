@@ -21,6 +21,9 @@ dist-ssr
 .mcp.json
 output/
 *.tsbuildinfo
+docs/templates/demo-handoffs.md
+docs/verification/readme-demo.md
+docs/verification/readme-reproduction-prompt.md
 
 # Editor directories and files
 .vscode/*
