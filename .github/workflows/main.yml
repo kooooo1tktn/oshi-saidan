@@ -25,6 +25,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm test -- --runInBand
+      - run: node --test scripts/demo-deploy-guard.test.mjs
 
   build:
     name: Build (${{ matrix.mode }})
@@ -65,6 +66,41 @@ jobs:
           BUILD_RESULT: ${{ needs.build.result }}
         run: test "$CHECKS_RESULT" = success && test "$BUILD_RESULT" = success
 
-# 公開準備中は配信しない。
-# デモの送信制御・読取専用設定・採用素材・公開先の検証後に、
-# mainのCI成功と配信先照合を条件とするlive配信を追加する。
+  deploy:
+    name: Deploy public demo
+    needs: ci
+    # 通常利用検証・読取専用化・公開承認後にのみ、この変数をtrueにする。
+    if: >-
+      needs.ci.result == 'success' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.DEMO_RELEASE_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: firebase-live-demo
+      cancel-in-progress: false
+    env:
+      VITE_DEMO_MODE: "true"
+      VITE_SUPABASE_URL: ${{ secrets.DEMO_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.DEMO_SUPABASE_ANON_KEY }}
+      FIREBASE_PROJECT_ID: oshi-saidan
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Verify demo destination before building
+        run: node scripts/demo-deploy-guard.mjs
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - run: npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@7c850a480ce753f4f06f010801fc5a43787740bb # v0
+        with:
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: oshi-saidan
+          channelId: live
+          firebaseToolsVersion: 14.9.0
