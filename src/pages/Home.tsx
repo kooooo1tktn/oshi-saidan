@@ -1,8 +1,10 @@
 import { Box, Grid, Text, Spinner, Center } from "@chakra-ui/react";
 import { getPosts } from "../supabase/supabaseFunctions";
 import { useQuery } from "@tanstack/react-query";
-import { Post } from "../types";
+import type { Post } from "../types";
 import { PostCard } from "../components/PostCard";
+import { isDemoMode } from "../config/demo";
+import { DemoOverviewNotice } from "../components/DemoNotice";
 
 export const Home = () => {
   const { data, isLoading, isError, error } = useQuery<Post[]>({
@@ -10,32 +12,47 @@ export const Home = () => {
     queryFn: getPosts,
   });
 
+  let postContent = null;
+
   if (isLoading) {
-    return (
+    postContent =
       <Center py={20}>
-        <Spinner color="#FF6EB4" size="xl" thickness="3px" data-testid="loading-spinner" />
+        <Spinner
+          color="#FF6EB4"
+          size="xl"
+          thickness="3px"
+          data-testid="loading-spinner"
+        />
       </Center>
-    );
-  }
-
-  if (isError) {
-    return (
-      <Center py={20}>
-        <Text color="#6650A0" fontFamily="body">
-          投稿の取得に失敗しました: {error.message}
-        </Text>
-      </Center>
-    );
-  }
-
-  if (!data?.length) {
-    return (
-      <Center py={20}>
-        <Text fontFamily="heading" fontSize="lg" color="#6650A0">
-          まだ投稿がありません ✦
-        </Text>
-      </Center>
-    );
+    } else if (isError) {
+        postContent =
+          <Center py={20}>
+            <Text color="#6650A0" fontFamily="body">
+              投稿の取得に失敗しました: {error.message}
+            </Text>
+          </Center>
+    } else if (!data?.length) {
+        postContent =
+          <Center py={20}>
+            <Text fontFamily="heading" fontSize="lg" color="#6650A0">
+              まだ投稿がありません ✦
+            </Text>
+          </Center>
+    } else {
+        postContent = (
+          <Grid
+            templateColumns={{
+              base: "1fr",
+              md: "repeat(2, 1fr)",
+              lg: "repeat(3, 1fr)",
+            }}
+            gap={5}
+          >
+            {data.map((post) => (
+              <PostCard key={post.id} post={post} />
+            ))}
+          </Grid>
+        );
   }
 
   return (
@@ -49,15 +66,8 @@ export const Home = () => {
       >
         ホーム
       </Text>
-
-      <Grid
-        templateColumns={{ base: "1fr", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" }}
-        gap={5}
-      >
-        {data.map((post) => (
-          <PostCard key={post.id} post={post} />
-        ))}
-      </Grid>
+      {isDemoMode && <DemoOverviewNotice />}
+      {postContent}
     </Box>
   );
 };
