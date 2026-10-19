@@ -15,6 +15,13 @@ dist-ssr
 !.env.example
 .firebase/
 
+# Local agent settings and verification artifacts (not publication assets)
+.agents/
+.codex/
+.mcp.json
+output/
+*.tsbuildinfo
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
