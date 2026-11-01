@@ -5,6 +5,8 @@ import App from "../src/App";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
+jest.mock("../src/config/demo", () => ({ isDemoMode: false }));
+
 // React Routerのモック
 jest.mock("react-router-dom", () => ({
   BrowserRouter: ({ children }: { children: React.ReactNode }) => (

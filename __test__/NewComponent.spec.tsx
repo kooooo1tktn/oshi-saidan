@@ -6,6 +6,9 @@ import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import { createPosts } from "../src/supabase/supabaseFunctions";
 
+// Viteの環境変数を読む設定は置き換え、通常利用の既存テストを維持する。
+jest.mock("../src/config/demo", () => ({ isDemoMode: false }));
+
 // モック：React Router
 const mockNavigate = jest.fn();
 
@@ -167,6 +170,8 @@ describe("新規投稿ページ", () => {
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith("/");
     });
+    expect(createPosts).toHaveBeenCalledTimes(1);
+    expect(createPosts).toHaveBeenCalledWith(mockFile, "説明文テスト入力");
   });
 
   it("投稿失敗時、エラーメッセージが表示されること", async () => {

@@ -9,7 +9,7 @@ export const Header = () => {
       top={0}
       zIndex={100}
       h="64px"
-      px={12}
+      px={{ base: 4, md: 12 }}
       bg="rgba(248,246,255,0.78)"
       style={{ backdropFilter: "blur(18px)" }}
       borderBottom="1px solid rgba(200,170,255,0.28)"
@@ -20,7 +20,9 @@ export const Header = () => {
           as={Link}
           to="/"
           fontFamily="heading"
-          fontSize="22px"
+          fontSize={{ base: "18px", md: "22px" }}
+          whiteSpace="nowrap"
+          flexShrink={0}
           fontWeight="700"
           textDecoration="none"
           style={{
@@ -34,12 +36,16 @@ export const Header = () => {
         </Text>
 
         {/* Nav links */}
-        <HStack spacing={6}>
+        <HStack spacing={{ base: 3, md: 6 }}>
           <Text
             as={Link}
             to="/"
             fontFamily="heading"
-            fontSize="15px"
+            fontSize={{ base: "13px", md: "15px" }}
+            whiteSpace="nowrap"
+            display="inline-flex"
+            alignItems="center"
+            minH="44px"
             fontWeight="500"
             color="#6650A0"
             textDecoration="none"
@@ -53,11 +59,15 @@ export const Header = () => {
             to="/new"
             fontFamily="heading"
             fontSize="14px"
+            whiteSpace="nowrap"
+            display="inline-flex"
+            alignItems="center"
+            minH="44px"
             fontWeight="600"
             bg="#FF6EB4"
             color="white"
             borderRadius="full"
-            px={5}
+            px={{ base: 3, md: 5 }}
             py={2}
             textDecoration="none"
             _hover={{ bg: "#DD3888" }}

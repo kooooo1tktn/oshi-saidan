@@ -9,7 +9,8 @@ import {
 import { useParams, Link } from "react-router-dom";
 import { getPostById, getImageUrl } from "../supabase/supabaseFunctions";
 import { useQuery } from "@tanstack/react-query";
-import { Post } from "../types";
+import type { Post } from "../types";
+import { demoImageAlts } from "../config/demoImageAlts";
 
 export const Posts = () => {
   const { id } = useParams<{ id: string }>();
@@ -74,7 +75,11 @@ export const Posts = () => {
         boxShadow="0 4px 24px rgba(100,70,200,0.10), 0 1px 6px rgba(100,70,200,0.06)"
       >
         <AspectRatio ratio={4 / 3}>
-          <Image src={imageUrl} alt="投稿画像" objectFit="cover" />
+          <Image
+            src={imageUrl}
+            alt={demoImageAlts[data.image_url] ?? "投稿画像"}
+            objectFit="cover"
+          />
         </AspectRatio>
 
         <Box p={8}>

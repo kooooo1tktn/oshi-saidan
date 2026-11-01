@@ -6,6 +6,8 @@ import { getPosts } from "../src/supabase/supabaseFunctions";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
+jest.mock("../src/config/demo", () => ({ isDemoMode: false }));
+
 // モック：React Router
 jest.mock("react-router-dom", () => ({
   Link: ({ children }: { children: React.ReactNode }) => (

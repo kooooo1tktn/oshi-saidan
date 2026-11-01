@@ -37,6 +37,29 @@ describe("投稿詳細ページ", () => {
       });
     })
 
+  // 実際に描画された画像の説明を調べ、取得結果から画面までのつながりを確認する。
+  it.each([
+    { path: "demo/01-how-to.png", alt: "薄紫の机に、羽のあるミント色のマスコットの写真、カメラ、白紙のノートを並べた様子。" },
+    { path: "demo/02-sample-sorane.png", alt: "朝の光が差す棚に、星のランタンを持つ架空の人物のアクリルスタンドと缶バッジ、青いリボンを飾った様子。" },
+    { path: "demo/03-sample-popo.png", alt: "暖かい灯りの横に、紫の冠羽と青い翼の小鳥のぬいぐるみ、同じ小鳥のチャームを並べた様子。" },
+  ])("採用画像 $path の内容を代替テキストで伝える", async ({ path, alt }) => {
+    (getPostById as jest.Mock).mockResolvedValueOnce({
+      id: 1,
+      description: "画像とは別の投稿本文",
+      image_url: path,
+    });
+    render(
+      <ChakraProvider>
+        <QueryClientProvider client={queryClient}>
+          <Posts />
+        </QueryClientProvider>
+      </ChakraProvider>,
+    );
+
+    expect(await screen.findByRole("img", { name: alt })).toBeInTheDocument();
+    expect(screen.getByText("画像とは別の投稿本文")).toBeInTheDocument();
+  });
+
   it("投稿画像と説明文が表示されること", async () => {
     render(
       <ChakraProvider>

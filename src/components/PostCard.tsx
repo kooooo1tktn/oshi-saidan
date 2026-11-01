@@ -1,7 +1,11 @@
 import { AspectRatio, Box, Image, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import { Post } from "../types";
+import type { Post } from "../types";
 import { getImageUrl } from "../supabase/supabaseFunctions";
+import { demoBadgeLabels } from "../config/demoBadges";
+import { isDemoMode } from "../config/demo";
+import { DemoBadge } from "../components/DemoBadge";
+import { demoImageAlts } from "../config/demoImageAlts";
 
 type Props = {
   post: Post;
@@ -10,11 +14,14 @@ type Props = {
 export const PostCard = ({ post }: Props) => {
   const imageUrl = getImageUrl(post.image_url);
 
+  const badgeLabel = demoBadgeLabels[post.image_url];
+
   return (
     <Box
       as={Link}
       to={`/posts/${post.id}`}
       display="block"
+      position="relative"
       bg="rgba(255,255,255,0.72)"
       style={{ backdropFilter: "blur(12px)" }}
       border="1px solid"
@@ -32,8 +39,15 @@ export const PostCard = ({ post }: Props) => {
     >
       {/* Card image */}
       <AspectRatio ratio={16 / 9}>
-        <Image src={imageUrl} alt="投稿画像" objectFit="cover" />
+        <Image
+          src={imageUrl}
+          alt={demoImageAlts[post.image_url] ?? "投稿画像"}
+          objectFit="cover"
+        />
       </AspectRatio>
+      {isDemoMode && badgeLabel !== undefined && (
+        <DemoBadge label={badgeLabel} />
+      )}
 
       {/* Card body */}
       <Box p="16px 20px 20px">

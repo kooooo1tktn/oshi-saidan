@@ -1,0 +1,95 @@
+name: Firebase authentication check
+
+# mainにマージした後、Actions画面から明示的に実行する。配信は行わない。
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify Firebase authentication (read only)
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Install Google authentication library in a temporary environment
+        shell: bash
+        run: |
+          python3 -m venv "$RUNNER_TEMP/firebase-auth-venv"
+          "$RUNNER_TEMP/firebase-auth-venv/bin/pip" install 'google-auth[requests]==2.40.3'
+
+      - name: Authenticate and find the expected Hosting site
+        shell: bash
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          "$RUNNER_TEMP/firebase-auth-venv/bin/python" - <<'PY'
+          import json
+          import os
+          import sys
+          import requests
+          from google.auth.transport.requests import Request
+          from google.oauth2 import service_account
+
+          stage = "Secretの形式・配信専用アカウントの確認"
+          try:
+              account = json.loads(os.environ["FIREBASE_SERVICE_ACCOUNT"])
+              if (
+                  account.get("type") != "service_account"
+                  or account.get("project_id") != "oshi-saidan"
+                  or account.get("client_email") !=
+                  "github-hosting-deploy@oshi-saidan.iam.gserviceaccount.com"
+                  or account.get("token_uri") != "https://oauth2.googleapis.com/token"
+              ):
+                  raise ValueError("Unexpected account")
+
+              # JWT署名・トークン取得はGoogleのライブラリに任せる。
+              # 読み取り専用スコープに限定し、秘密鍵・トークンは出力しない。
+              credentials = service_account.Credentials.from_service_account_info(
+                  account,
+                  scopes=["https://www.googleapis.com/auth/firebase.hosting.readonly"],
+              )
+              stage = "Googleへの認証"
+              credentials.refresh(Request())
+
+              stage = "Hostingサイト一覧の取得"
+              page_token = None
+              found = False
+              while True:
+                  response = requests.get(
+                      "https://firebasehosting.googleapis.com/v1beta1/projects/oshi-saidan/sites",
+                      headers={"Authorization": "Bearer " + credentials.token},
+                      params={"pageToken": page_token} if page_token else {},
+                      timeout=30,
+                      allow_redirects=False,
+                  )
+                  if response.status_code != 200:
+                      print(f"::error::Hostingサイト一覧の取得に失敗しました (HTTP {response.status_code})")
+                      sys.exit(1)
+                  result = response.json()
+                  found = any(
+                      site.get("name", "").rsplit("/", 1)[-1] == "oshi-saidan"
+                      and site.get("defaultUrl") == "https://oshi-saidan.web.app"
+                      for site in result.get("sites", [])
+                  )
+                  page_token = result.get("nextPageToken")
+                  if found or not page_token:
+                      break
+              stage = "期待するHostingサイトの照合"
+              if not found:
+                  raise ValueError("Expected site missing")
+          except Exception:
+              # 例外本文やレスポンス本文には認証情報が含まれ得るため出力しない。
+              print(f"::error::{stage}に失敗しました。認証情報・API応答の詳細は表示しません。")
+              sys.exit(1)
+
+          print("認証成功: 配信専用アカウントでoshi-saidanのHostingサイトを確認しました。")
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as summary:
+              summary.write("### Firebase認証確認\n\n")
+              summary.write("- 配信専用サービスアカウントでの認証: 成功\n")
+              summary.write("- Hostingサイト: `oshi-saidan`\n")
+              summary.write("- デプロイ・設定変更: 実施していません\n")
+              summary.write("- 配信の書き込み権限は、この読み取り検証の対象外です\n")
+          PY
