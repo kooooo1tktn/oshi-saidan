@@ -70,14 +70,14 @@ Gitはアプリのファイルを取得する道具、Node.jsはPC上でアプ�
 **Windows**
 
 1. [Git for Windows](https://git-scm.com/install/windows)からインストーラーを入手し、インストールします。コマンドラインからGitを使える既定の設定を選びます。
-2. [Node.js 22.15.0](https://nodejs.org/en/download/archive/v22.15.0)の「Installer Packages」でPCに合うWindows用 `.msi` を選んでインストールします。一般的なIntel・AMDのPCはx64、ARM搭載PCはARM64です。
+2. [Node.js 22.23.4](https://nodejs.org/en/download/archive/v22.23.4)の「Installer Packages」でPCに合うWindows用 `.msi` を選んでインストールします。一般的なIntel・AMDのPCはx64、ARM搭載PCはARM64です。
 3. スタートメニューで「コマンド プロンプト」を検索して開きます。以下のWindows用コマンドは、この画面で実行します。
 
 **Mac**
 
 1. `⌘ + Space` を押し、「ターミナル」と入力して開きます。
 2. `git --version` を入力します。開発者ツールのインストール案内が出た場合は「インストール」を選び、完了を待ちます。詳しくは[Git公式のMac向け案内](https://git-scm.com/install/mac)を参照してください。
-3. [Node.js 22.15.0](https://nodejs.org/en/download/archive/v22.15.0)の「Installer Packages」でmacOS用 `.pkg` を選び、インストールします。
+3. [Node.js 22.23.4](https://nodejs.org/en/download/archive/v22.23.4)の「Installer Packages」でmacOS用 `.pkg` を選び、インストールします。
 
 **両OS共通の確認**
 
@@ -89,7 +89,7 @@ node --version
 npm --version
 ```
 
-成功すると各バージョンが表示されます。動作確認環境は **Node.js 22.15.0 / npm 10.9.2** です。CIも[.nvmrc](.nvmrc)のNode.jsバージョンを使用します。Vite 7の要件に合わせ、22系では22.12.0以上が必要です。**Windowsでの実行と、新規環境での導入手順全体は未検証です。**
+成功すると各バージョンが表示されます。動作確認環境は **Node.js 22.23.4 / npm 10.9.9** です。CIも[.nvmrc](.nvmrc)のNode.jsバージョンを使用します。Vite 7の要件に合わせ、22系では22.12.0以上が必要です。**Windowsでの実行と、新規環境での導入手順全体は未検証です。**
 
 <a id="setup-download"></a>
 ### 2. アプリを取得する
